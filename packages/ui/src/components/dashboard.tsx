@@ -1,4 +1,10 @@
-import { Link, NavLink, Form as RemixForm, useSubmit } from '@remix-run/react';
+import {
+  Link,
+  type LinkProps,
+  NavLink,
+  Form as RemixForm,
+  useSubmit,
+} from '@remix-run/react';
 import React, {
   type PropsWithChildren,
   useContext,
@@ -30,7 +36,7 @@ export const Dashboard = ({ children }: PropsWithChildren) => {
 
   return (
     <DashboardContext.Provider value={{ open, setOpen }}>
-      <main className="fixed flex h-screen w-screen">{children}</main>
+      <main>{children}</main>
     </DashboardContext.Provider>
   );
 };
@@ -110,12 +116,14 @@ type DashboardNavigationLinkProps = {
   icon: JSX.Element;
   label: string;
   pathname: string;
+  prefetch?: LinkProps['prefetch'];
 };
 
 Dashboard.NavigationLink = function NavigationLink({
   icon,
   label,
   pathname,
+  prefetch,
 }: DashboardNavigationLinkProps) {
   const { setOpen } = useContext(DashboardContext);
 
@@ -125,7 +133,12 @@ Dashboard.NavigationLink = function NavigationLink({
 
   return (
     <li>
-      <NavLink className={itemClassName} onClick={onClick} to={pathname}>
+      <NavLink
+        className={itemClassName}
+        onClick={onClick}
+        prefetch={prefetch}
+        to={pathname}
+      >
         {icon} {label}
       </NavLink>
     </li>
@@ -142,8 +155,9 @@ Dashboard.Page = function Page({ children }: PropsWithChildren) {
   return (
     <section
       className={cx(
-        'box-border flex w-full flex-col gap-4 overflow-scroll p-4 pb-24 @container',
-        'md:p-6 md:pb-16'
+        'box-border flex flex-col gap-4 @container',
+        'p-4 pb-24',
+        'md:ml-[270px] md:p-6 md:pb-16'
       )}
     >
       {children}
@@ -194,10 +208,10 @@ Dashboard.Sidebar = function Sidebar({ children }: PropsWithChildren) {
   return (
     <aside
       className={cx(
-        'min-h-screen w-[270px] min-w-[270px] flex-col items-start gap-4 overflow-scroll border-r border-r-gray-200 p-6',
+        'fixed left-0 h-screen w-[270px] flex-col items-start gap-4 overflow-auto border-r border-r-gray-200 p-6',
         'md:flex',
         open
-          ? 'fixed left-0 z-10 flex w-[calc(100%-4rem)] animate-[slide-from-left_300ms] bg-white md:hidden'
+          ? 'z-10 flex w-[calc(100%-4rem)] animate-[slide-from-left_300ms] bg-white md:hidden'
           : 'hidden'
       )}
     >
